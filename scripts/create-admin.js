@@ -18,28 +18,40 @@ async function createAdmin() {
         await mongoose.connect(MONGODB_URI);
         console.log('✓ Conectado a MongoDB');
 
+        // Generar credenciales seguras
+        const adminEmail = 'admin@bikimar.com';
+        const adminPassword = 'Bikimar2025!Admin';
+
         // Verificar si ya existe un admin
-        const existingAdmin = await User.findOne({ email: 'admin@marinabikinis.com' });
+        const existingAdmin = await User.findOne({ email: adminEmail });
 
         if (existingAdmin) {
-            console.log('⚠ Ya existe un usuario admin con ese email');
+            console.log('⚠ Actualizando credenciales del usuario admin...');
+            const hashedPassword = await bcrypt.hash(adminPassword, 10);
+            existingAdmin.password = hashedPassword;
+            existingAdmin.email = adminEmail;
+            await existingAdmin.save();
+            console.log('✓ Usuario admin actualizado exitosamente:');
+            console.log(`  Email: ${adminEmail}`);
+            console.log(`  Password: ${adminPassword}`);
+            console.log('\n⚠ GUARDA ESTAS CREDENCIALES EN UN LUGAR SEGURO\n');
             process.exit(0);
         }
 
         // Crear nuevo usuario admin
-        const hashedPassword = await bcrypt.hash('admin123', 10);
+        const hashedPassword = await bcrypt.hash(adminPassword, 10);
 
         const admin = await User.create({
-            email: 'admin@marinabikinis.com',
+            email: adminEmail,
             password: hashedPassword,
-            name: 'Administrador',
+            name: 'Administrador Bikimar',
             role: 'admin',
         });
 
         console.log('✓ Usuario admin creado exitosamente:');
-        console.log('  Email: admin@marinabikinis.com');
-        console.log('  Password: admin123');
-        console.log('\n⚠ IMPORTANTE: Cambia la contraseña después del primer login\n');
+        console.log(`  Email: ${adminEmail}`);
+        console.log(`  Password: ${adminPassword}`);
+        console.log('\n⚠ GUARDA ESTAS CREDENCIALES EN UN LUGAR SEGURO\n');
 
         process.exit(0);
     } catch (error) {
