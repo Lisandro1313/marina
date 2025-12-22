@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { FiSettings, FiBarChart2, FiPackage, FiSave } from 'react-icons/fi';
+import { FiSettings, FiBarChart2, FiPackage, FiSave, FiImage } from 'react-icons/fi';
+import { CldUploadWidget } from 'next-cloudinary';
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -13,6 +14,8 @@ export default function SettingsPage() {
     instagramUrl: '',
     storeName: 'Bikimar',
     storeDescription: '',
+    bannerText: '',
+    heroImages: [] as string[],
   });
 
   useEffect(() => {
@@ -28,6 +31,8 @@ export default function SettingsPage() {
         instagramUrl: data.instagramUrl || '',
         storeName: data.storeName || 'Bikimar',
         storeDescription: data.storeDescription || '',
+        bannerText: data.bannerText || '✦ Envíos a todo el país ✦ 3 cuotas sin interés ✦ Temporada 2025 ✦ Diseños únicos ✦ Bordados a mano ✦ Envíos express',
+        heroImages: data.heroImages || [],
       });
     } catch (error) {
       console.error('Error al cargar configuración:', error);
@@ -56,6 +61,21 @@ export default function SettingsPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleImageUpload = (result: any) => {
+    const imageUrl = result.info.secure_url;
+    setFormData(prev => ({
+      ...prev,
+      heroImages: [...prev.heroImages, imageUrl]
+    }));
+  };
+
+  const removeImage = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      heroImages: prev.heroImages.filter((_, i) => i !== index)
+    }));
   };
 
   return (
@@ -147,6 +167,77 @@ export default function SettingsPage() {
                 placeholder="Descripción de tu tienda..."
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
               />
+            </div>
+
+            <div className="border-t pt-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                <FiImage />
+                Contenido de la Página Principal
+              </h3>
+
+              <div className="space-y-6">
+                {/* Banner Text */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Texto del Banner (Marquesina)
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={formData.bannerText}
+                    onChange={(e) => setFormData({ ...formData, bannerText: e.target.value })}
+                    placeholder="✦ Envíos a todo el país ✦ 3 cuotas sin interés..."
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  />
+                  <p className="mt-2 text-sm text-gray-500">
+                    Este texto aparecerá en el banner animado debajo del hero
+                  </p>
+                </div>
+
+                {/* Hero Images */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Imágenes del Carrusel de Portada
+                  </label>
+                  <p className="text-sm text-gray-500 mb-3">
+                    Estas imágenes aparecerán en el carrusel de la portada principal
+                  </p>
+
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+                    {formData.heroImages.map((image, index) => (
+                      <div key={index} className="relative group">
+                        <img 
+                          src={image} 
+                          alt={`Hero ${index + 1}`} 
+                          className="w-full h-40 object-cover rounded-lg"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeImage(index)}
+                          className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+
+                  <CldUploadWidget
+                    uploadPreset="bikimar"
+                    onSuccess={handleImageUpload}
+                  >
+                    {({ open }) => (
+                      <button
+                        type="button"
+                        onClick={() => open()}
+                        className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded-lg flex items-center gap-2 transition-colors"
+                      >
+                        <FiImage />
+                        Agregar Imagen al Carrusel
+                      </button>
+                    )}
+                  </CldUploadWidget>
+                </div>
+              </div>
             </div>
 
             <div className="flex gap-4 pt-4">

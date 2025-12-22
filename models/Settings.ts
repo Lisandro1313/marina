@@ -5,6 +5,8 @@ export interface ISettings extends mongoose.Document {
   instagramUrl?: string;
   storeName: string;
   storeDescription?: string;
+  bannerText?: string;
+  heroImages?: string[];
   updatedAt: Date;
 }
 
@@ -23,6 +25,14 @@ const SettingsSchema = new mongoose.Schema({
   },
   storeDescription: {
     type: String,
+  },
+  bannerText: {
+    type: String,
+    default: '✦ Envíos a todo el país ✦ 3 cuotas sin interés ✦ Temporada 2025 ✦ Diseños únicos ✦ Bordados a mano ✦ Envíos express',
+  },
+  heroImages: {
+    type: [String],
+    default: [],
   },
   updatedAt: {
     type: Date,
