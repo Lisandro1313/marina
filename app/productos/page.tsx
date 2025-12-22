@@ -235,8 +235,8 @@ export default function ProductosPage() {
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
 
   // Obtener estilos y categorías únicos
-  const uniqueStyles = Array.from(new Set(products.map(p => p.style).filter(Boolean)));
-  const uniqueCategories = Array.from(new Set(products.map(p => p.category).filter(Boolean)));
+  const uniqueStyles = Array.from(new Set(products.map(p => p.style).filter((s): s is string => Boolean(s))));
+  const uniqueCategories = Array.from(new Set(products.map(p => p.category).filter((c): c is string => Boolean(c))));
   const minPrice = Math.min(...products.map(p => p.price), 0);
   const maxPrice = Math.max(...products.map(p => p.price), 100000);
 
