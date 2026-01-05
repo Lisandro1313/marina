@@ -71,12 +71,11 @@ const orderSchema = new mongoose.Schema(
 );
 
 // Generar número de orden automático
-orderSchema.pre('save', async function (next) {
+orderSchema.pre('save', async function () {
   if (this.isNew && !this.orderNumber) {
     const count = await mongoose.models.Order.countDocuments();
     this.orderNumber = `BK${String(count + 1).padStart(6, '0')}`;
   }
-  next();
 });
 
 const Order = mongoose.models.Order || mongoose.model<IOrder>('Order', orderSchema);
