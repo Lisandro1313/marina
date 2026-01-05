@@ -6,11 +6,12 @@ import { getServerSession } from 'next-auth';
 // GET - Obtener una orden específica
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     await connectDB();
-    const order = await Order.findById(params.id);
+    const order = await Order.findById(id);
 
     if (!order) {
       return NextResponse.json({ error: 'Orden no encontrada' }, { status: 404 });
@@ -26,8 +27,9 @@ export async function GET(
 // PATCH - Actualizar estado de orden (solo admin)
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const session = await getServerSession();
     
@@ -39,7 +41,7 @@ export async function PATCH(
     const body = await request.json();
     const { status, notes } = body;
 
-    const order = await Order.findById(params.id);
+    const order = await Order.findById(id);
 
     if (!order) {
       return NextResponse.json({ error: 'Orden no encontrada' }, { status: 404 });
@@ -60,8 +62,9 @@ export async function PATCH(
 // DELETE - Eliminar orden (solo admin)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const session = await getServerSession();
     
@@ -70,7 +73,7 @@ export async function DELETE(
     }
 
     await connectDB();
-    const order = await Order.findByIdAndDelete(params.id);
+    const order = await Order.findByIdAndDelete(id);
 
     if (!order) {
       return NextResponse.json({ error: 'Orden no encontrada' }, { status: 404 });
