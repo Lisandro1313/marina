@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Order from '@/models/Order';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/lib/auth';
 import { sendOrderNotification } from '@/lib/email';
 
 // GET - Obtener todas las órdenes (solo admin)
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     
     // Solo admins pueden ver todas las órdenes
     if (!session?.user) {
