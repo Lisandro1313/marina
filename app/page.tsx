@@ -1,8 +1,11 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { FaWhatsapp, FaInstagram } from 'react-icons/fa';
+import WaterFooter from '@/components/WaterFooter';
+import CartDrawer from '@/components/CartDrawer';
+import AddToCartModal from '@/components/AddToCartModal';
 
 interface Product {
   _id: string;
@@ -166,7 +169,15 @@ function ProductCard({ product }: { product: Product }) {
   );
 }
 
-function ProductGridCard({ product }: { product: Product }) {
+function ProductGridCard({ 
+  product,
+  setSelectedProduct,
+  setShowModal 
+}: { 
+  product: Product;
+  setSelectedProduct: (product: Product) => void;
+  setShowModal: (show: boolean) => void;
+}) {
   const [whatsappNumber, setWhatsappNumber] = useState('5491123456789');
 
   useEffect(() => {
@@ -228,23 +239,36 @@ function ProductGridCard({ product }: { product: Product }) {
           </span>
         </div>
         
-        <button
-          onClick={handleWhatsAppClick}
-          className="w-full bg-gray-900 text-white px-4 py-3 text-sm uppercase tracking-wide hover:bg-gray-800 transition-colors font-medium flex items-center justify-center gap-2"
-        >
-          <FaWhatsapp className="text-base" />
-          Ordenar
-        </button>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={() => {
+                setSelectedProduct(product);
+                setShowModal(true);
+              }}
+              className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-4 py-3 text-sm uppercase tracking-wide hover:shadow-lg transition-all font-medium flex items-center justify-center gap-2"
+            >
+              🛒 Carrito
+            </button>
+            <button
+              onClick={handleWhatsAppClick}
+              className="bg-gray-900 text-white px-4 py-3 text-sm uppercase tracking-wide hover:bg-gray-800 transition-colors font-medium flex items-center justify-center gap-2"
+            >
+              <FaWhatsapp className="text-base" />
+              Ordenar
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [heroImageIndex, setHeroImageIndex] = useState(0);
   const [currentProductIndex, setCurrentProductIndex] = useState(0);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
   const heroImages = [
     '/marina/WhatsApp Image 2025-12-13 at 12.00.50 AM (15).jpeg',
@@ -365,6 +389,7 @@ export default function Home() {
               >
                 <FaInstagram className="text-xl" />
               </a>
+              <CartDrawer />
             </div>
           </div>
         </div>
@@ -605,49 +630,32 @@ export default function Home() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {products.map((product) => (
-                <ProductGridCard key={product._id} product={product} />
+                <ProductGridCard 
+                  key={product._id} 
+                  product={product}
+                  setSelectedProduct={setSelectedProduct}
+                  setShowModal={setShowModal}
+                />
               ))}
             </div>
           </div>
         </section>
       )}
-
-      {/* Footer minimalista */}
-      <footer className="bg-gray-50 border-t border-gray-200 py-12">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center space-y-6">
-            <div>
-              <h3 className="text-2xl font-light tracking-wider text-gray-900 mb-2">
-                MARINA BIKINIS AUTORA
-              </h3>
-              <p className="text-sm text-gray-600 tracking-wide">Diseños artesanales • Bordados a mano</p>
-            </div>
-            
-            <div className="flex justify-center gap-6">
-              <a
-                href="https://www.instagram.com/marinabikinisautora/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                <FaInstagram className="text-2xl" />
-              </a>
-              <a
-                href="https://wa.me/5492215082423"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                <FaWhatsapp className="text-2xl" />
-              </a>
-            </div>
-            
-            <p className="text-xs text-gray-500 tracking-wide">
-              © 2025 Marina Bikinis Autora. Todos los derechos reservados.
-            </p>
-          </div>
-        </div>
-      </footer>
+      
+      {/* Footer */}
+      <WaterFooter />
+      
+      {/* Modal de Agregar al Carrito */}
+      {selectedProduct && (
+        <AddToCartModal
+          product={selectedProduct}
+          isOpen={showModal}
+          onClose={() => {
+            setShowModal(false);
+            setSelectedProduct(null);
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
@@ -148,7 +148,7 @@ export default function DashboardPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('¿Estás seguro de eliminar este producto?')) return;
+    if (!confirm('Â¿EstÃ¡s seguro de eliminar este producto?')) return;
 
     try {
       await fetch(`/api/products?id=${id}`, { method: 'DELETE' });
@@ -172,7 +172,7 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-800">Panel de Administración</h1>
+          <h1 className="text-3xl font-bold text-gray-800">Panel de AdministraciÃ³n</h1>
           <div className="flex gap-3">
             <Link
               href="/admin/analytics"
@@ -186,7 +186,7 @@ export default function DashboardPage() {
               className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
             >
               <FiSettings />
-              Configuración
+              ConfiguraciÃ³n
             </Link>
             <Link
               href="/admin/products/new"
@@ -205,7 +205,7 @@ export default function DashboardPage() {
             Productos ({products.length})
           </h2>
           <p className="text-sm text-gray-600">
-            Arrastra para reordenar cómo aparecen en la tienda
+            Arrastra para reordenar cÃ³mo aparecen en la tienda
           </p>
         </div>
 
@@ -226,12 +226,12 @@ export default function DashboardPage() {
 
         {products.length === 0 && (
           <div className="text-center py-12 text-gray-500">
-            <p className="text-lg mb-4">No hay productos todavía</p>
+            <p className="text-lg mb-4">No hay productos todavÃ­a</p>
             <Link
               href="/admin/products/new"
               className="text-pink-500 hover:text-pink-600 font-semibold"
             >
-              Crear tu primer producto →
+              Crear tu primer producto â†’
             </Link>
           </div>
         )}
@@ -239,3 +239,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+

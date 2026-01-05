@@ -1,8 +1,10 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { FaWhatsapp, FaInstagram, FaSortAmountDown, FaHeart, FaRegHeart, FaTh, FaList, FaFilter, FaTimes, FaSearch } from 'react-icons/fa';
+import { FaWhatsapp, FaInstagram, FaSortAmountDown, FaHeart, FaRegHeart, FaTh, FaList, FaFilter, FaTimes, FaSearch, FaShoppingCart } from 'react-icons/fa';
+import CartDrawer from '@/components/CartDrawer';
+import AddToCartModal from '@/components/AddToCartModal';
 
 interface Product {
   _id: string;
@@ -72,11 +74,11 @@ function ProductCard({ product, viewMode, favorites, toggleFavorite }: {
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gray-50">
-              <span className="text-4xl opacity-20">👙</span>
+              <span className="text-4xl opacity-20">ðŸ‘™</span>
             </div>
           )}
           
-          {/* Botón favorito */}
+          {/* BotÃ³n favorito */}
           <button
             onClick={() => toggleFavorite(product._id)}
             className="absolute top-3 right-3 bg-white/90 p-2 rounded-full shadow-lg hover:bg-white transition-colors"
@@ -95,7 +97,7 @@ function ProductCard({ product, viewMode, favorites, toggleFavorite }: {
           )}
         </div>
 
-        {/* Información */}
+        {/* InformaciÃ³n */}
         <div className="flex-1 p-5 flex flex-col justify-between">
           <div className="space-y-3">
             <h3 className="text-xl font-medium text-gray-900">
@@ -142,7 +144,7 @@ function ProductCard({ product, viewMode, favorites, toggleFavorite }: {
 
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-shadow group relative">
-      {/* Botón favorito */}
+      {/* BotÃ³n favorito */}
       <button
         onClick={() => toggleFavorite(product._id)}
         className="absolute top-3 right-3 bg-white/90 p-2 rounded-full shadow-lg hover:bg-white transition-colors z-10"
@@ -154,7 +156,7 @@ function ProductCard({ product, viewMode, favorites, toggleFavorite }: {
         )}
       </button>
 
-      {/* Imagen del producto con hover para ver más imágenes */}
+      {/* Imagen del producto con hover para ver mÃ¡s imÃ¡genes */}
       <div 
         className="relative aspect-[3/4] overflow-hidden bg-gray-100 cursor-pointer"
         onMouseEnter={() => product.images?.[1] && setCurrentImageIndex(1)}
@@ -169,11 +171,11 @@ function ProductCard({ product, viewMode, favorites, toggleFavorite }: {
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gray-50">
-            <span className="text-4xl opacity-20">👙</span>
+            <span className="text-4xl opacity-20">ðŸ‘™</span>
           </div>
         )}
         
-        {/* Badge de múltiples imágenes */}
+        {/* Badge de mÃºltiples imÃ¡genes */}
         {product.images && product.images.length > 1 && (
           <div className="absolute top-3 left-3 bg-black/70 text-white px-2 py-1 rounded text-xs">
             {product.images.length} fotos
@@ -181,7 +183,7 @@ function ProductCard({ product, viewMode, favorites, toggleFavorite }: {
         )}
       </div>
 
-      {/* Información del producto */}
+      {/* InformaciÃ³n del producto */}
       <div className="p-5 space-y-3">
         <h3 className="text-lg font-medium text-gray-900 min-h-[3rem]">
           {product.name}
@@ -227,6 +229,7 @@ export default function ProductosPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [favorites, setFavorites] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
+  const [modalProduct, setModalProduct] = useState<Product | null>(null);
   
   // Filtros avanzados
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
@@ -234,7 +237,7 @@ export default function ProductosPage() {
   const [priceRange, setPriceRange] = useState<PriceRange>({ min: 0, max: 100000 });
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
 
-  // Obtener estilos y categorías únicos
+  // Obtener estilos y categorías Ãºnicos
   const uniqueStyles = Array.from(new Set(products.map(p => p.style).filter((s): s is string => Boolean(s))));
   const uniqueCategories = Array.from(new Set(products.map(p => p.category).filter((c): c is string => Boolean(c))));
   const minPrice = Math.min(...products.map(p => p.price), 0);
@@ -324,7 +327,7 @@ export default function ProductosPage() {
         filtered.sort((a, b) => b.price - a.price);
         break;
       case 'newest':
-        // Ya vienen ordenados por orden de creación
+        // Ya vienen ordenados por orden de creaciÃ³n
         break;
     }
 
@@ -379,6 +382,12 @@ export default function ProductosPage() {
                 Productos
               </a>
               <a
+                href="/sobre-nosotros"
+                className="text-sm text-gray-600 hover:text-gray-900 transition-colors uppercase tracking-wide"
+              >
+                Sobre Nosotros
+              </a>
+              <a
                 href="/admin/dashboard"
                 className="hidden md:block text-sm text-gray-600 hover:text-gray-900 transition-colors uppercase tracking-wide"
               >
@@ -399,12 +408,12 @@ export default function ProductosPage() {
 
       {/* Contenido principal */}
       <main className="max-w-7xl mx-auto px-4 py-12">
-        {/* Título y controles */}
+        {/* TÃ­tulo y controles */}
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-light tracking-[0.2em] text-gray-900 mb-2">
             TODOS LOS PRODUCTOS
           </h1>
-          <p className="text-gray-600 mb-8">Explorá nuestra colección completa</p>
+          <p className="text-gray-600 mb-8">Explorá nuestra colecciÃ³n completa</p>
 
           {/* Barra de búsqueda principal */}
           <div className="relative mb-6">
@@ -422,7 +431,7 @@ export default function ProductosPage() {
           <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between bg-gray-50 p-4 rounded-lg">
             {/* Botones de vista y filtros */}
             <div className="flex items-center gap-3">
-              {/* Botón de filtros */}
+              {/* BotÃ³n de filtros */}
               <button
                 onClick={() => setShowFilters(!showFilters)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
@@ -440,7 +449,7 @@ export default function ProductosPage() {
                 )}
               </button>
 
-              {/* Botón favoritos */}
+              {/* BotÃ³n favoritos */}
               <button
                 onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
@@ -485,7 +494,7 @@ export default function ProductosPage() {
                 onChange={(e) => setSortBy(e.target.value as any)}
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 bg-white"
               >
-                <option value="newest">Más recientes</option>
+                <option value="newest">MÃ¡s recientes</option>
                 <option value="name">Nombre (A-Z)</option>
                 <option value="price-asc">Precio: menor a mayor</option>
                 <option value="price-desc">Precio: mayor a menor</option>
@@ -530,7 +539,7 @@ export default function ProductosPage() {
                 {/* Filtro por categoría */}
                 {uniqueCategories.length > 0 && (
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-3">Categoría</h4>
+                    <h4 className="font-medium text-gray-900 mb-3">categoría</h4>
                     <div className="space-y-2">
                       {uniqueCategories.map((category) => (
                         <label key={category} className="flex items-center gap-2 cursor-pointer">
@@ -650,7 +659,7 @@ export default function ProductosPage() {
               <h3 className="text-2xl font-light tracking-wider text-gray-900 mb-2">
                 MARINA BIKINIS AUTORA
               </h3>
-              <p className="text-sm text-gray-600 tracking-wide">Diseños artesanales • Bordados a mano</p>
+              <p className="text-sm text-gray-600 tracking-wide">DiseÃ±os artesanales â€¢ Bordados a mano</p>
             </div>
             
             <div className="flex justify-center gap-6">
@@ -673,7 +682,7 @@ export default function ProductosPage() {
             </div>
             
             <p className="text-xs text-gray-500 tracking-wide">
-              © 2025 Marina Bikinis Autora. Todos los derechos reservados.
+              Â© 2025 Marina Bikinis Autora. Todos los derechos reservados.
             </p>
           </div>
         </div>
@@ -681,3 +690,10 @@ export default function ProductosPage() {
     </div>
   );
 }
+
+
+
+
+
+
+

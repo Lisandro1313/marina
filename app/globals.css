@@ -95,10 +95,10 @@ body {
 
 @keyframes shimmer {
   0% {
-    background-position: -1000px 0;
+    transform: translateX(-100%);
   }
   100% {
-    background-position: 1000px 0;
+    transform: translateX(100%);
   }
 }
 
@@ -182,13 +182,11 @@ body {
 }
 
 .animate-shimmer {
-  animation: shimmer 3s linear infinite;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  background-size: 1000px 100%;
+  animation: shimmer 3s ease-in-out infinite;
 }
 
 .animate-marquee {
-  animation: marquee 30s linear infinite;
+  animation: marquee 20s linear infinite;
 }
 
 .animate-blob {
