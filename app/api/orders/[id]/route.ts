@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Order from '@/models/Order';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/lib/auth';
 
 // GET - Obtener una orden específica
 export async function GET(
@@ -31,7 +32,7 @@ export async function PATCH(
 ) {
   const { id } = await params;
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     
     if (!session?.user) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
@@ -66,7 +67,7 @@ export async function DELETE(
 ) {
   const { id } = await params;
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     
     if (!session?.user) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
