@@ -49,7 +49,7 @@ export default function SettingsPage() {
         footerDescription: data.footerDescription || 'Bordados a mano con dedicación',
       });
     } catch (error) {
-      console.error('Error al cargar configuración:', error);
+      console.error('Error fetching settings:', error);
     }
   };
 
@@ -65,13 +65,14 @@ export default function SettingsPage() {
       });
 
       if (res.ok) {
-        alert('✅ Configuración guardada exitosamente');
+        alert('Configuración guardada correctamente');
+        router.refresh();
       } else {
-        alert('❌ Error al guardar configuración');
+        alert('Error al guardar la configuración');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('❌ Error al guardar configuración');
+      alert('Error al guardar la configuración');
     } finally {
       setLoading(false);
     }
@@ -149,18 +150,17 @@ export default function SettingsPage() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Número de WhatsApp *
+                    Número de WhatsApp
                   </label>
                   <input
-                    type="text"
-                    required
+                    type="tel"
                     value={formData.whatsappNumber}
                     onChange={(e) => setFormData({ ...formData, whatsappNumber: e.target.value })}
-                    placeholder="5491123456789"
+                    placeholder="5492215082423"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                   />
                   <p className="mt-2 text-sm text-gray-500">
-                    Formato: código de país + número (sin + ni espacios). Ej: 5491123456789
+                    Incluye el código de país sin espacios ni símbolos. Ejemplo: 5491155555555
                   </p>
                 </div>
 
@@ -169,10 +169,10 @@ export default function SettingsPage() {
                     URL de Instagram
                   </label>
                   <input
-                    type="text"
+                    type="url"
                     value={formData.instagramUrl}
                     onChange={(e) => setFormData({ ...formData, instagramUrl: e.target.value })}
-                    placeholder="https://www.instagram.com/marinabikinisautora/"
+                    placeholder="https://instagram.com/tu.tienda"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                   />
                 </div>
@@ -183,19 +183,19 @@ export default function SettingsPage() {
                   </label>
                   <input
                     type="text"
-                    required
                     value={formData.storeName}
                     onChange={(e) => setFormData({ ...formData, storeName: e.target.value })}
+                    placeholder="Bikimar"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Descripción
+                    Descripción de la Tienda
                   </label>
                   <textarea
-                    rows={4}
+                    rows={3}
                     value={formData.storeDescription}
                     onChange={(e) => setFormData({ ...formData, storeDescription: e.target.value })}
                     placeholder="Descripción de tu tienda..."
@@ -338,8 +338,8 @@ export default function SettingsPage() {
                   {formData.footerGif && (
                     <div className="mb-4">
                       <img 
-                        src={formData.footerGif} 
-                        alt="Footer GIF" 
+                        src={formData.footerGif}
+                        alt="Footer GIF"
                         className="w-full max-w-md h-48 object-cover rounded-lg"
                       />
                     </div>
@@ -422,7 +422,7 @@ export default function SettingsPage() {
             </div>
           </form>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
