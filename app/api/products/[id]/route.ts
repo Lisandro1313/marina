@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { connectDB } from '@/lib/mongodb';
+import dbConnect from '@/lib/mongodb';
 import Product from '@/models/Product';
 
 // GET /api/products/[id] - Obtener un producto por ID
@@ -8,7 +8,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    await connectDB();
+    await dbConnect();
     
     const product = await Product.findById(params.id);
     
@@ -35,7 +35,7 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    await connectDB();
+    await dbConnect();
     
     const data = await request.json();
     
@@ -68,7 +68,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    await connectDB();
+    await dbConnect();
     
     const product = await Product.findByIdAndDelete(params.id);
     

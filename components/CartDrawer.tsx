@@ -1,16 +1,69 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCart } from '@/context/CartContext';
 import Image from 'next/image';
-import { FaShoppingCart, FaTimes, FaTrash, FaMinus, FaPlus } from 'react-icons/fa';
-import Link from 'next/link';
+import { FaShoppingCart, FaTimes, FaTrash, FaMinus, FaPlus, FaWhatsapp } from 'react-icons/fa';
 
 export default function CartDrawer() {
   const [isOpen, setIsOpen] = useState(false);
-  const { cart, removeFromCart, updateQuantity, getTotalItems, getTotalPrice } = useCart();
+  const [customerData, setCustomerData] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    address: ''
+  });
+  const [whatsappNumber, setWhatsappNumber] = useState('5492215082423');
+  const { cart, removeFromCart, updateQuantity, getTotalItems, getTotalPrice, clearCart } = useCart();
 
   const totalItems = getTotalItems();
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then(res => res.json())
+      .then(data => {
+        if (data.whatsappNumber) setWhatsappNumber(data.whatsappNumber);
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleCheckout = () => {
+    // Validar datos del cliente
+    if (!customerData.name || !customerData.phone) {
+      alert('Por favor completá tu nombre y teléfono');
+      return;
+    }
+
+    // Construir mensaje para WhatsApp
+    let message = `🛍️ *NUEVO PEDIDO* 🛍️\n\n`;
+    message += `👤 *Cliente:*\n`;
+    message += `Nombre: ${customerData.name}\n`;
+    message += `Teléfono: ${customerData.phone}\n`;
+    if (customerData.email) message += `Email: ${customerData.email}\n`;
+    if (customerData.address) message += `Dirección: ${customerData.address}\n`;
+    message += `\n📦 *Productos:*\n\n`;
+
+    cart.forEach((item, index) => {
+      message += `${index + 1}. ${item.name}\n`;
+      message += `   Talle: ${item.size}\n`;
+      message += `   Cantidad: ${item.quantity}\n`;
+      message += `   Precio: $${item.price}\n\n`;
+    });
+
+    message += `💰 *Total: $${getTotalPrice().toLocaleString()}*`;
+
+    // Abrir WhatsApp
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+    window.open(whatsappUrl, '_blank');
+
+    // Cerrar drawer y limpiar carrito
+    setTimeout(() => {
+      setIsOpen(false);
+      clearCart();
+      setCustomerData({ name: '', phone: '', email: '', address: '' });
+    }, 500);
+  };
 
   return (
     <>
@@ -134,20 +187,59 @@ export default function CartDrawer() {
           {/* Footer con total y checkout */}
           {cart.length > 0 && (
             <div className="border-t border-gray-200 p-4 space-y-4">
-              <div className="flex justify-between items-center">
+              {/* Formulario de datos del cliente */}
+              <div className="space-y-3">
+                <h3 className="text-sm font-medium text-gray-900">Tus datos</h3>
+                <input
+                  type="text"
+                  placeholder="Nombre completo *"
+                  value={customerData.name}
+                  onChange={(e) => setCustomerData({ ...customerData, name: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  required
+                />
+                <input
+                  type="tel"
+                  placeholder="Teléfono *"
+                  value={customerData.phone}
+                  onChange={(e) => setCustomerData({ ...customerData, phone: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  required
+                />
+                <input
+                  type="email"
+                  placeholder="Email (opcional)"
+                  value={customerData.email}
+                  onChange={(e) => setCustomerData({ ...customerData, email: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                />
+                <textarea
+                  placeholder="Dirección de envío (opcional)"
+                  value={customerData.address}
+                  onChange={(e) => setCustomerData({ ...customerData, address: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 focus:border-transparent resize-none"
+                  rows={2}
+                />
+              </div>
+
+              <div className="flex justify-between items-center pt-2">
                 <span className="text-lg font-medium text-gray-900">Total:</span>
                 <span className="text-2xl font-light text-gray-900">
                   ${getTotalPrice().toLocaleString()}
                 </span>
               </div>
 
-              <Link
-                href="/checkout"
-                onClick={() => setIsOpen(false)}
-                className="block w-full bg-gray-900 text-white py-3 px-4 rounded-lg text-center font-medium hover:bg-gray-800 transition-colors uppercase tracking-wide"
+              <button
+                onClick={handleCheckout}
+                className="block w-full bg-[#25D366] text-white py-3 px-4 rounded-lg text-center font-medium hover:bg-[#22c55e] transition-colors uppercase tracking-wide flex items-center justify-center gap-2"
               >
-                Finalizar Compra
-              </Link>
+                <FaWhatsapp className="text-xl" />
+                Enviar Pedido por WhatsApp
+              </button>
+
+              <p className="text-xs text-gray-500 text-center">
+                Te responderemos a la brevedad para coordinar tu pedido
+              </p>
 
               <button
                 onClick={() => setIsOpen(false)}

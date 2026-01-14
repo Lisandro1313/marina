@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { connectDB } from '@/lib/mongodb';
+import dbConnect from '@/lib/mongodb';
 import Analytics from '@/models/Analytics';
 
 // POST /api/analytics/view - Registrar vista de producto individual
@@ -14,7 +14,7 @@ export async function POST(request: Request) {
       );
     }
 
-    await connectDB();
+    await dbConnect();
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
