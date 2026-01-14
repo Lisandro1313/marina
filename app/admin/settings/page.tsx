@@ -418,3 +418,11 @@ export default function SettingsPage() {
               >
                 <FiSave />
                 {loading ? 'Guardando...' : 'Guardar Configuración'}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
