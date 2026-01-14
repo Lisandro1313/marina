@@ -85,7 +85,6 @@ export async function GET(request: NextRequest) {
 
     // Obtener analíticas agregadas (productViews y productClicks)
     const aggregatedAnalytics = await Analytics.find({
-      date: { $exists: true },
       date: { $gte: dateFrom }
     }).sort({ date: -1 });
 
