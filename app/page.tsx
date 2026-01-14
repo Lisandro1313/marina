@@ -189,7 +189,10 @@ function ProductGridCard({
       .catch(() => {});
   }, []);
 
-  const handleWhatsAppClick = async () => {
+  const handleWhatsAppClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
     try {
       await fetch('/api/analytics/click', {
         method: 'POST',
@@ -203,10 +206,17 @@ function ProductGridCard({
     window.open(url, '_blank');
   };
 
+  const handleCardClick = () => {
+    window.location.href = `/productos/${product._id}`;
+  };
+
   return (
-    <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-shadow group">
-      {/* Imagen del producto */}
-      <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
+    <div 
+      onClick={handleCardClick}
+      className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all group cursor-pointer"
+    >
+      {/* Imagen del producto - más pequeña */}
+      <div className="relative aspect-square overflow-hidden bg-gray-100">
         {product.images?.[0] ? (
           <Image
             src={product.images[0]}
@@ -216,51 +226,52 @@ function ProductGridCard({
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gray-50">
-            <span className="text-4xl opacity-20">👙</span>
+            <span className="text-3xl opacity-20">👙</span>
           </div>
         )}
       </div>
 
-      {/* Información del producto */}
-      <div className="p-4 space-y-3">
-        <h3 className="text-lg font-medium text-gray-900">
+      {/* Información del producto - más compacta */}
+      <div className="p-3 space-y-2">
+        <h3 className="text-base font-medium text-gray-900 line-clamp-1">
           {product.name}
         </h3>
         
         {product.description && (
-          <p className="text-sm text-gray-600 line-clamp-2">
+          <p className="text-xs text-gray-600 line-clamp-1">
             {product.description}
           </p>
         )}
         
-        <div className="flex items-center justify-between pt-2">
-          <span className="text-2xl font-light text-gray-900">
+        <div className="flex items-center justify-between pt-1">
+          <span className="text-xl font-light text-gray-900">
             ${product.price}
           </span>
         </div>
         
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              onClick={() => {
-                setSelectedProduct(product);
-                setShowModal(true);
-              }}
-              className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-4 py-3 text-sm uppercase tracking-wide hover:shadow-lg transition-all font-medium flex items-center justify-center gap-2"
-            >
-              🛒 Carrito
-            </button>
-            <button
-              onClick={handleWhatsAppClick}
-              className="bg-gray-900 text-white px-4 py-3 text-sm uppercase tracking-wide hover:bg-gray-800 transition-colors font-medium flex items-center justify-center gap-2"
-            >
-              <FaWhatsapp className="text-base" />
-              Ordenar
-            </button>
-          </div>
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setSelectedProduct(product);
+              setShowModal(true);
+            }}
+            className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-2 py-2 text-xs uppercase tracking-wide hover:shadow-lg transition-all font-medium flex items-center justify-center gap-1"
+          >
+            🛒
+          </button>
+          <button
+            onClick={handleWhatsAppClick}
+            className="bg-gray-900 text-white px-2 py-2 text-xs uppercase tracking-wide hover:bg-gray-800 transition-colors font-medium flex items-center justify-center gap-1"
+          >
+            <FaWhatsapp className="text-sm" />
+          </button>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -269,14 +280,21 @@ export default function Home() {
   const [currentProductIndex, setCurrentProductIndex] = useState(0);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showModal, setShowModal] = useState(false);
-
-  const heroImages = [
-    '/marina/WhatsApp Image 2025-12-13 at 12.00.50 AM (15).jpeg',
-    '/marina/WhatsApp Image 2025-12-13 at 12.00.49 AM (3).jpeg',
-    '/marina/WhatsApp Image 2025-12-13 at 12.00.49 AM (5).jpeg',
-    '/marina/WhatsApp Image 2025-12-13 at 12.00.50 AM (10).jpeg',
-    '/marina/WhatsApp Image 2025-12-13 at 12.00.50 AM (18).jpeg',
-  ];
+  const [settings, setSettings] = useState({
+    heroImages: [
+      '/marina/WhatsApp Image 2025-12-13 at 12.00.50 AM (15).jpeg',
+      '/marina/WhatsApp Image 2025-12-13 at 12.00.49 AM (3).jpeg',
+      '/marina/WhatsApp Image 2025-12-13 at 12.00.49 AM (5).jpeg',
+      '/marina/WhatsApp Image 2025-12-13 at 12.00.50 AM (10).jpeg',
+      '/marina/WhatsApp Image 2025-12-13 at 12.00.50 AM (18).jpeg',
+    ],
+    heroTitle: 'MARINA',
+    heroSubtitle: 'BIKINIS AUTORA',
+    heroDescription: 'Diseños artesanales únicos\nBordados a mano con dedicación',
+    bannerText: '✦ Envíos a todo el país ✦ 3 cuotas sin interés ✦ Temporada 2025 ✦ Diseños únicos ✦ Bordados a mano ✦ Envíos express',
+    instagramUrl: 'https://www.instagram.com/marinabikinisautora/',
+    whatsappNumber: '5492215082423',
+  });
 
   const nextProduct = () => {
     setCurrentProductIndex((prev) => (prev + 1) % products.length);
@@ -290,16 +308,44 @@ export default function Home() {
 
   useEffect(() => {
     fetchProducts();
+    fetchSettings();
     trackVisit();
     setupPageTitleChange();
-    
-    // Carrusel de imágenes hero
-    const heroInterval = setInterval(() => {
-      setHeroImageIndex((prev) => (prev + 1) % heroImages.length);
-    }, 5000);
-
-    return () => clearInterval(heroInterval);
   }, []);
+
+  useEffect(() => {
+    if (settings.heroImages.length > 0) {
+      const heroInterval = setInterval(() => {
+        setHeroImageIndex((prev) => (prev + 1) % settings.heroImages.length);
+      }, 5000);
+
+      return () => clearInterval(heroInterval);
+    }
+  }, [settings.heroImages.length]);
+
+  const fetchSettings = async () => {
+    try {
+      const res = await fetch('/api/settings');
+      const data = await res.json();
+      setSettings({
+        heroImages: data.heroImages && data.heroImages.length > 0 ? data.heroImages : [
+          '/marina/WhatsApp Image 2025-12-13 at 12.00.50 AM (15).jpeg',
+          '/marina/WhatsApp Image 2025-12-13 at 12.00.49 AM (3).jpeg',
+          '/marina/WhatsApp Image 2025-12-13 at 12.00.49 AM (5).jpeg',
+          '/marina/WhatsApp Image 2025-12-13 at 12.00.50 AM (10).jpeg',
+          '/marina/WhatsApp Image 2025-12-13 at 12.00.50 AM (18).jpeg',
+        ],
+        heroTitle: data.heroTitle || 'MARINA',
+        heroSubtitle: data.heroSubtitle || 'BIKINIS AUTORA',
+        heroDescription: data.heroDescription || 'Diseños artesanales únicos\nBordados a mano con dedicación',
+        bannerText: data.bannerText || '✦ Envíos a todo el país ✦ 3 cuotas sin interés ✦ Temporada 2025 ✦ Diseños únicos ✦ Bordados a mano ✦ Envíos express',
+        instagramUrl: data.instagramUrl || 'https://www.instagram.com/marinabikinisautora/',
+        whatsappNumber: data.whatsappNumber || '5492215082423',
+      });
+    } catch (error) {
+      console.error('Error al cargar settings:', error);
+    }
+  };
 
   const setupPageTitleChange = () => {
     const originalTitle = 'Marina Bikinis Autora';
@@ -382,7 +428,7 @@ export default function Home() {
                 Admin
               </a>
               <a
-                href="https://www.instagram.com/marinabikinisautora/"
+                href={settings.instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-900 hover:text-gray-600 transition-colors"
@@ -398,7 +444,7 @@ export default function Home() {
       {/* Hero con carrusel automático de imágenes - estilo premium */}
       <section className="relative h-screen overflow-hidden">
         {/* Carrusel de imágenes de fondo */}
-        {heroImages.map((image, index) => (
+        {settings.heroImages.map((image, index) => (
           <div
             key={image}
             className={`absolute inset-0 transition-opacity duration-1000 ${
@@ -424,16 +470,20 @@ export default function Home() {
             {/* Logo/Título con efecto especial */}
             <div className="space-y-4">
               <h1 className="text-6xl md:text-8xl font-light tracking-[0.4em] mb-6 animate-fade-in animation-delay-200">
-                MARINA
+                {settings.heroTitle}
               </h1>
               <div className="w-32 h-0.5 bg-white mx-auto animate-fade-in animation-delay-400"></div>
               <p className="text-2xl md:text-3xl font-light tracking-[0.3em] animate-fade-in animation-delay-600">
-                BIKINIS AUTORA
+                {settings.heroSubtitle}
               </p>
             </div>
             
             <p className="text-lg md:text-xl font-light mb-12 max-w-2xl mx-auto leading-relaxed animate-fade-in animation-delay-1000">
-              Diseños artesanales únicos<br/>Bordados a mano con dedicación
+              {settings.heroDescription.split('\n').map((line, i) => (
+                <span key={i}>
+                  {line}{i < settings.heroDescription.split('\n').length - 1 && <br />}
+                </span>
+              ))}
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in animation-delay-1000">
@@ -448,7 +498,7 @@ export default function Home() {
                 </span>
               </a>
               <a
-                href="https://wa.me/5492215082423"
+                href={`https://wa.me/${settings.whatsappNumber}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group border-2 border-white text-white px-12 py-4 text-sm tracking-[0.25em] uppercase backdrop-blur-sm hover:bg-white hover:text-gray-900 transition-all hover:tracking-[0.3em]"
@@ -461,7 +511,7 @@ export default function Home() {
         
         {/* Indicadores del carrusel */}
         <div className="absolute bottom-28 left-1/2 transform -translate-x-1/2 flex gap-2 z-20">
-          {heroImages.map((_, index) => (
+          {settings.heroImages.map((_, index) => (
             <button
               key={index}
               onClick={() => setHeroImageIndex(index)}
@@ -491,10 +541,10 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer"></div>
         <div className="flex animate-marquee whitespace-nowrap">
           <span className="text-sm tracking-[0.2em] uppercase mx-12 font-light">
-            ✦ Envíos a todo el país ✦ 3 cuotas sin interés ✦ Temporada 2025 ✦ Diseños únicos ✦ Bordados a mano ✦ Envíos express
+            {settings.bannerText}
           </span>
           <span className="text-sm tracking-[0.2em] uppercase mx-12 font-light">
-            ✦ Envíos a todo el país ✦ 3 cuotas sin interés ✦ Temporada 2025 ✦ Diseños únicos ✦ Bordados a mano ✦ Envíos express
+            {settings.bannerText}
           </span>
         </div>
       </div>

@@ -1,9 +1,37 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { FaWhatsapp, FaInstagram } from 'react-icons/fa';
 import Image from 'next/image';
 
 export default function WaterFooter() {
+  const [settings, setSettings] = useState({
+    footerGif: '/marina/Beautiful Water GIF.gif',
+    footerTitle: 'MARINA BIKINIS',
+    footerSubtitle: 'Diseños artesanales únicos',
+    footerDescription: 'Bordados a mano con dedicación',
+    instagramUrl: 'https://www.instagram.com/marinabikinisautora/',
+    whatsappNumber: '5492215082423',
+    bannerText: '✦ Diseños únicos y exclusivos ✦ Calidad artesanal ✦ Atención personalizada ✦ Colección 2025 ✦ Bordados exclusivos ✦ Made with love'
+  });
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then(res => res.json())
+      .then(data => {
+        setSettings({
+          footerGif: data.footerGif || '/marina/Beautiful Water GIF.gif',
+          footerTitle: data.footerTitle || 'MARINA BIKINIS',
+          footerSubtitle: data.footerSubtitle || 'Diseños artesanales únicos',
+          footerDescription: data.footerDescription || 'Bordados a mano con dedicación',
+          instagramUrl: data.instagramUrl || 'https://www.instagram.com/marinabikinisautora/',
+          whatsappNumber: data.whatsappNumber || '5492215082423',
+          bannerText: data.bannerText || '✦ Diseños únicos y exclusivos ✦ Calidad artesanal ✦ Atención personalizada ✦ Colección 2025 ✦ Bordados exclusivos ✦ Made with love'
+        });
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <footer className="relative overflow-hidden">
       {/* Banner infinito superior - igual al de arriba */}
@@ -11,10 +39,10 @@ export default function WaterFooter() {
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer"></div>
         <div className="flex animate-marquee whitespace-nowrap">
           <span className="text-sm tracking-[0.2em] uppercase mx-12 font-light">
-            ✦ Diseños únicos y exclusivos ✦ Calidad artesanal ✦ Atención personalizada ✦ Colección 2025 ✦ Bordados exclusivos ✦ Made with love
+            {settings.bannerText}
           </span>
           <span className="text-sm tracking-[0.2em] uppercase mx-12 font-light">
-            ✦ Diseños únicos y exclusivos ✦ Calidad artesanal ✦ Atención personalizada ✦ Colección 2025 ✦ Bordados exclusivos ✦ Made with love
+            {settings.bannerText}
           </span>
         </div>
       </div>
@@ -24,7 +52,7 @@ export default function WaterFooter() {
         {/* GIF de agua de fondo con mejor brillo */}
         <div className="absolute inset-0">
           <Image
-            src="/marina/Beautiful Water GIF.gif"
+            src={settings.footerGif}
             alt="Water animation"
             fill
             className="object-cover transition-transform duration-700 ease-in-out hover:scale-105 brightness-110"
@@ -41,21 +69,21 @@ export default function WaterFooter() {
           <div className="text-center space-y-8">
             <div className="transform transition-transform duration-300 hover:scale-105">
               <h3 className="text-4xl md:text-5xl font-light tracking-[0.35em] text-white mb-4 drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
-                MARINA BIKINIS
+                {settings.footerTitle}
               </h3>
               <div className="space-y-2">
                 <p className="text-xl text-white tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                  Diseños artesanales únicos
+                  {settings.footerSubtitle}
                 </p>
                 <p className="text-lg text-white/95 tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                  Bordados a mano con dedicación
+                  {settings.footerDescription}
                 </p>
               </div>
             </div>
 
             <div className="flex justify-center gap-6 pt-4">
               <a
-                href="https://www.instagram.com/marinabikinisautora/"
+                href={settings.instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group transform transition-all duration-300 hover:scale-110 hover:-translate-y-2"
@@ -65,7 +93,7 @@ export default function WaterFooter() {
                 </div>
               </a>
               <a
-                href="https://wa.me/5492215082423"
+                href={`https://wa.me/${settings.whatsappNumber}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group transform transition-all duration-300 hover:scale-110 hover:-translate-y-2"

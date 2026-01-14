@@ -7,6 +7,13 @@ export interface ISettings extends mongoose.Document {
   storeDescription?: string;
   bannerText?: string;
   heroImages?: string[];
+  heroTitle?: string;
+  heroSubtitle?: string;
+  heroDescription?: string;
+  footerGif?: string;
+  footerTitle?: string;
+  footerSubtitle?: string;
+  footerDescription?: string;
   updatedAt: Date;
 }
 
@@ -33,6 +40,34 @@ const SettingsSchema = new mongoose.Schema({
   heroImages: {
     type: [String],
     default: [],
+  },
+  heroTitle: {
+    type: String,
+    default: 'MARINA',
+  },
+  heroSubtitle: {
+    type: String,
+    default: 'BIKINIS AUTORA',
+  },
+  heroDescription: {
+    type: String,
+    default: 'Diseños artesanales únicos\nBordados a mano con dedicación',
+  },
+  footerGif: {
+    type: String,
+    default: '/marina/Beautiful Water GIF.gif',
+  },
+  footerTitle: {
+    type: String,
+    default: 'MARINA BIKINIS',
+  },
+  footerSubtitle: {
+    type: String,
+    default: 'Diseños artesanales únicos',
+  },
+  footerDescription: {
+    type: String,
+    default: 'Bordados a mano con dedicación',
   },
   updatedAt: {
     type: Date,

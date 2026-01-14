@@ -172,8 +172,15 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-800">Panel de AdministraciÃ³n</h1>
+          <h1 className="text-3xl font-bold text-gray-800">Panel de Administración</h1>
           <div className="flex gap-3">
+            <Link
+              href="/"
+              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+              target="_blank"
+            >
+              🏠 Ver Sitio
+            </Link>
             <Link
               href="/admin/analytics"
               className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
@@ -186,7 +193,7 @@ export default function DashboardPage() {
               className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
             >
               <FiSettings />
-              ConfiguraciÃ³n
+              Configuración
             </Link>
             <Link
               href="/admin/products/new"

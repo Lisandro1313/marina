@@ -15,6 +15,16 @@ interface AnalyticsData {
     city: string;
     timestamp: string;
   }>;
+  productViews: Array<{
+    productId: string;
+    productName: string;
+    views: number;
+  }>;
+  productClicks: Array<{
+    productId: string;
+    productName: string;
+    clicks: number;
+  }>;
   pagination: {
     currentPage: number;
     totalPages: number;
@@ -62,6 +72,13 @@ export default function AnalyticsPage() {
         <div className="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
           <h1 className="text-3xl font-bold text-gray-800">Analytics</h1>
           <div className="flex gap-3">
+            <Link
+              href="/"
+              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+              target="_blank"
+            >
+              🏠 Ver Sitio
+            </Link>
             <Link
               href="/admin/dashboard"
               className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
@@ -170,6 +187,67 @@ export default function AnalyticsPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Productos más vistos y clickeados */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              {/* Productos más vistos */}
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                  <FiEye className="text-blue-500" />
+                  Productos Más Vistos
+                </h2>
+                <div className="space-y-3">
+                  {data.productViews && data.productViews.length > 0 ? (
+                    data.productViews.map((product, index) => (
+                      <div key={index} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <span className="text-xl font-bold text-blue-500">#{index + 1}</span>
+                          <div>
+                            <span className="text-gray-800 font-medium block">{product.productName}</span>
+                            <span className="text-xs text-gray-500">ID: {product.productId.substring(0, 8)}...</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <FiEye className="text-blue-500" />
+                          <span className="text-gray-800 font-bold">{product.views}</span>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-500 text-center py-4">No hay datos de vistas de productos</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Productos más clickeados (WhatsApp) */}
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                  <FiMousePointer className="text-green-500" />
+                  Productos Más Clickeados
+                </h2>
+                <div className="space-y-3">
+                  {data.productClicks && data.productClicks.length > 0 ? (
+                    data.productClicks.map((product, index) => (
+                      <div key={index} className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <span className="text-xl font-bold text-green-500">#{index + 1}</span>
+                          <div>
+                            <span className="text-gray-800 font-medium block">{product.productName}</span>
+                            <span className="text-xs text-gray-500">ID: {product.productId.substring(0, 8)}...</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <FiMousePointer className="text-green-500" />
+                          <span className="text-gray-800 font-bold">{product.clicks}</span>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-500 text-center py-4">No hay datos de clicks en productos</p>
+                  )}
+                </div>
               </div>
             </div>
 
