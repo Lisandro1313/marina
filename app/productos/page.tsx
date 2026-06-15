@@ -16,6 +16,8 @@ interface Product {
   style?: string;
   pattern?: string;
   stitching?: string;
+  colors?: string[];
+  sizes?: string[];
 }
 
 interface PriceRange {
@@ -23,24 +25,15 @@ interface PriceRange {
   max: number;
 }
 
-function ProductCard({ product, viewMode, favorites, toggleFavorite }: { 
-  product: Product; 
+function ProductCard({ product, viewMode, favorites, toggleFavorite, whatsappNumber }: {
+  product: Product;
   viewMode: 'grid' | 'list';
   favorites: string[];
   toggleFavorite: (id: string) => void;
+  whatsappNumber: string;
 }) {
-  const [whatsappNumber, setWhatsappNumber] = useState('5491123456789');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const isFavorite = favorites.includes(product._id);
-
-  useEffect(() => {
-    fetch('/api/settings')
-      .then(res => res.json())
-      .then(data => {
-        if (data.whatsappNumber) setWhatsappNumber(data.whatsappNumber);
-      })
-      .catch(() => {});
-  }, []);
 
   const handleWhatsAppClick = async () => {
     try {
@@ -199,7 +192,9 @@ function ProductCard({ product, viewMode, favorites, toggleFavorite }: {
           {product.style && (
             <p><span className="font-medium">Estilo:</span> {product.style}</p>
           )}
-          <p><span className="font-medium">Talles:</span> S, M, L</p>
+          {product.sizes && product.sizes.length > 0 && (
+            <p><span className="font-medium">Talles:</span> {product.sizes.join(', ')}</p>
+          )}
         </div>
         
         <div className="flex items-center justify-between pt-3 border-t border-gray-100">
@@ -230,7 +225,8 @@ export default function ProductosPage() {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
   const [modalProduct, setModalProduct] = useState<Product | null>(null);
-  
+  const [whatsappNumber, setWhatsappNumber] = useState('5492215082423');
+
   // Filtros avanzados
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -246,6 +242,12 @@ export default function ProductosPage() {
   useEffect(() => {
     fetchProducts();
     loadFavorites();
+    fetch('/api/settings')
+      .then(res => res.json())
+      .then(data => {
+        if (data.whatsappNumber) setWhatsappNumber(data.whatsappNumber);
+      })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -627,12 +629,13 @@ export default function ProductosPage() {
             : "space-y-4"
           }>
             {filteredProducts.map((product) => (
-              <ProductCard 
-                key={product._id} 
-                product={product} 
+              <ProductCard
+                key={product._id}
+                product={product}
                 viewMode={viewMode}
                 favorites={favorites}
                 toggleFavorite={toggleFavorite}
+                whatsappNumber={whatsappNumber}
               />
             ))}
           </div>
@@ -672,7 +675,7 @@ export default function ProductosPage() {
                 <FaInstagram className="text-2xl" />
               </a>
               <a
-                href="https://wa.me/5492215082423"
+                href={`https://wa.me/${whatsappNumber}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-600 hover:text-gray-900 transition-colors"

@@ -1,6 +1,7 @@
 ﻿'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { FaWhatsapp, FaInstagram } from 'react-icons/fa';
 import WaterFooter from '@/components/WaterFooter';
@@ -17,20 +18,12 @@ interface Product {
   style?: string;
   pattern?: string;
   stitching?: string;
+  colors?: string[];
+  sizes?: string[];
 }
 
-function ProductCard({ product }: { product: Product }) {
-  const [whatsappNumber, setWhatsappNumber] = useState('5491123456789');
+function ProductCard({ product, whatsappNumber }: { product: Product; whatsappNumber: string }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  useEffect(() => {
-    fetch('/api/settings')
-      .then(res => res.json())
-      .then(data => {
-        if (data.whatsappNumber) setWhatsappNumber(data.whatsappNumber);
-      })
-      .catch(() => {});
-  }, []);
 
   const handleWhatsAppClick = async () => {
     try {
@@ -139,14 +132,18 @@ function ProductCard({ product }: { product: Product }) {
               <span className="text-sm text-gray-700">{product.style}</span>
             </div>
           )}
-          <div className="flex items-start gap-2">
-            <span className="text-sm font-medium text-gray-900 min-w-[80px]">Colores:</span>
-            <span className="text-sm text-gray-700">Negro, Blanco, Rojo, Azul</span>
-          </div>
-          <div className="flex items-start gap-2">
-            <span className="text-sm font-medium text-gray-900 min-w-[80px]">Talles:</span>
-            <span className="text-sm text-gray-700">S, M, L</span>
-          </div>
+          {product.colors && product.colors.length > 0 && (
+            <div className="flex items-start gap-2">
+              <span className="text-sm font-medium text-gray-900 min-w-[80px]">Colores:</span>
+              <span className="text-sm text-gray-700">{product.colors.join(', ')}</span>
+            </div>
+          )}
+          {product.sizes && product.sizes.length > 0 && (
+            <div className="flex items-start gap-2">
+              <span className="text-sm font-medium text-gray-900 min-w-[80px]">Talles:</span>
+              <span className="text-sm text-gray-700">{product.sizes.join(', ')}</span>
+            </div>
+          )}
         </div>
         
         <div className="border-t border-gray-200 pt-4 mt-4">
@@ -169,25 +166,18 @@ function ProductCard({ product }: { product: Product }) {
   );
 }
 
-function ProductGridCard({ 
+function ProductGridCard({
   product,
+  whatsappNumber,
   setSelectedProduct,
-  setShowModal 
-}: { 
+  setShowModal
+}: {
   product: Product;
+  whatsappNumber: string;
   setSelectedProduct: (product: Product) => void;
   setShowModal: (show: boolean) => void;
 }) {
-  const [whatsappNumber, setWhatsappNumber] = useState('5491123456789');
-
-  useEffect(() => {
-    fetch('/api/settings')
-      .then(res => res.json())
-      .then(data => {
-        if (data.whatsappNumber) setWhatsappNumber(data.whatsappNumber);
-      })
-      .catch(() => {});
-  }, []);
+  const router = useRouter();
 
   const handleWhatsAppClick = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -207,7 +197,7 @@ function ProductGridCard({
   };
 
   const handleCardClick = () => {
-    window.location.href = `/productos/${product._id}`;
+    router.push(`/productos/${product._id}`);
   };
 
   return (
@@ -593,7 +583,7 @@ export default function Home() {
 
             {/* Producto actual */}
             <div className="transition-opacity duration-300">
-              <ProductCard product={products[currentProductIndex]} />
+              <ProductCard product={products[currentProductIndex]} whatsappNumber={settings.whatsappNumber} />
             </div>
 
             {/* Indicadores de producto */}
@@ -653,7 +643,7 @@ export default function Home() {
                 <div className="text-center text-white space-y-4">
                   <p className="text-2xl md:text-3xl font-light tracking-wide mb-4">Próximamente nuevos diseños</p>
                   <a
-                    href="https://wa.me/5492215082423"
+                    href={`https://wa.me/${settings.whatsappNumber}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-block bg-white text-gray-900 px-8 py-3 text-sm uppercase tracking-wide hover:bg-gray-100 transition-colors"
@@ -680,9 +670,10 @@ export default function Home() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {products.map((product) => (
-                <ProductGridCard 
-                  key={product._id} 
+                <ProductGridCard
+                  key={product._id}
                   product={product}
+                  whatsappNumber={settings.whatsappNumber}
                   setSelectedProduct={setSelectedProduct}
                   setShowModal={setShowModal}
                 />

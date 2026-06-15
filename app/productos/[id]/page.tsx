@@ -16,6 +16,8 @@ interface Product {
   style?: string;
   pattern?: string;
   stitching?: string;
+  colors?: string[];
+  sizes?: string[];
 }
 
 export default function ProductPage() {
@@ -24,7 +26,7 @@ export default function ProductPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [whatsappNumber, setWhatsappNumber] = useState('5491123456789');
+  const [whatsappNumber, setWhatsappNumber] = useState('5492215082423');
 
   useEffect(() => {
     if (params.id) {
@@ -279,15 +281,19 @@ export default function ProductPage() {
                 </div>
               )}
               
-              <div className="flex items-start gap-3">
-                <span className="text-sm font-medium text-gray-900 min-w-[100px]">Colores:</span>
-                <span className="text-sm text-gray-700">Negro, Blanco, Rojo, Azul</span>
-              </div>
-              
-              <div className="flex items-start gap-3">
-                <span className="text-sm font-medium text-gray-900 min-w-[100px]">Talles:</span>
-                <span className="text-sm text-gray-700">S, M, L</span>
-              </div>
+              {product.colors && product.colors.length > 0 && (
+                <div className="flex items-start gap-3">
+                  <span className="text-sm font-medium text-gray-900 min-w-[100px]">Colores:</span>
+                  <span className="text-sm text-gray-700">{product.colors.join(', ')}</span>
+                </div>
+              )}
+
+              {product.sizes && product.sizes.length > 0 && (
+                <div className="flex items-start gap-3">
+                  <span className="text-sm font-medium text-gray-900 min-w-[100px]">Talles:</span>
+                  <span className="text-sm text-gray-700">{product.sizes.join(', ')}</span>
+                </div>
+              )}
             </div>
 
             <div className="pt-6 space-y-4">
